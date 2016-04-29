@@ -1,0 +1,24 @@
+{
+  "name": "react-js-offsite-session-server",
+  "version": "1.0.0",
+  "description": "Offsite react.js session server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react.js",
+    "demo",
+    "session",
+    "offsite",
+    "server"
+  ],
+  "dependencies": {
+    "browser-mongodb": "christkv/browser-mongodb#master",
+    "co": "^4.6.0",
+    "express": "^4.13.4",
+    "mongodb": "^2.1.18"
+  },
+  "author": "Christian Kvalheim",
+  "license": "Apache-2.0"
+}
