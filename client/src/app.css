@@ -1,0 +1,20 @@
+.chat {
+  height: 100%;
+  border: 1px solid lightgray;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.chat-users {
+  height: 800px;
+  border: 1px solid lightgray;
+}
+
+.chat-messages {
+  height: 800px;
+  border: 1px solid lightgray;
+}
+
+.chat-chat {
+  padding-top: 5px;
+}
