@@ -8,26 +8,20 @@ export default React.createClass({
     return {};
   },
 
-  componentDidMount: function() {
-  },
-
   render() {
-    console.log("=========== render Messages")
-    console.log(this.props)
-
     // Generate all the messages
     var messages = this.props.messages || [];
     messages = messages.map(function(message, index) {
       return (
-        <Grid key={index}>
-          <Row>
+        <Grid key={index} className="message-container">
+          <Row className="message-from">
             {message.from}
           </Row>
           <Row>
-            <Col sm={20} md={10}>
+            <Col sm={20} md={10} className="message-message">
               {message.message}
             </Col>
-            <Col sm={4} md={2}>
+            <Col sm={4} md={2} className="message-date">
               {message.date.getHours()}:{message.date.getMinutes()}
             </Col>
           </Row>

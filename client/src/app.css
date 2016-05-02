@@ -18,3 +18,20 @@
 .chat-chat {
   padding-top: 5px;
 }
+
+.message-container {
+  margin: 5px 5px 5px 5px;
+}
+
+.message-message {
+}
+
+.message-from {
+  background-color: lightgray;
+  padding-left: 5px;
+  font-weight: bold;
+}
+
+.message-date {
+  font-weight: bold;
+}

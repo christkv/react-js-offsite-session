@@ -15,10 +15,10 @@ export default React.createClass({
     var self = this;
 
     co(function*() {
-      // Register the error handler method
-      self.props.store.onError(self.onError);
       // Connect to the backend
       yield self.props.store.connect('http://localhost:9090');
+      // Wire up Error handler
+      wire(Actions.ERROR, self.onError, self.props.store);
       // Wire up global action handlers
       wire(Actions.USER_SUBMITTED, self.onAction, self.props.store);
       wire(Actions.CHAT_RECEIVED, self.onMessage, self.props.store);
@@ -27,31 +27,32 @@ export default React.createClass({
     });
   },
 
-  componentWillReceiveProps: function(nextProps) {
-  },
-
   onAction(event, message) {
-    console.log("============ recevied action :: " + event)
-    console.log(message)
     this.setState({ user: message.user });
   },
 
-  onMessage(event, message) {
-    console.log("============ received message :: " + event)
-    var messages = this.state.messages || [];
-    messages.push({from: message.user, message: message.message, date: message.createdOn})
-    // Update the state
-    this.setState({ messages: messages });
+  onError(event, message) {
+    console.log("Application Error occured");
+    console.log(message);
   },
 
-  onError(error) {
-
+  onMessage(event, message) {
+    this.state.messages.push({
+      from: message.user,
+      message: message.message,
+      date: message.createdOn});
+    // Update the state
+    this.setState({ messages: this.state.messages });
   },
 
   render: function() {
     var component = this.state.user
-      ? ( <Chat store={this.props.store} messages={this.state.messages} /> )
-      : ( <Logon store={this.props.store} />)
+      ? ( <Chat
+            store={this.props.store}
+            messages={this.state.messages}
+            user={this.state.user} /> )
+      : ( <Logon
+            store={this.props.store} />);
 
     return (
       <Grid className="show-grid" fluid={true}>

@@ -4,12 +4,16 @@ import React from 'react';
 import {Grid, Row, Col, Jumbotron, FormControl, Button} from 'react-bootstrap';
 import {Store, Actions, dispatch} from '../../store';
 
+const keyCodes = {
+  ENTER: 13,
+  ESCAPE: 27,
+  UP: 38,
+  DOWN: 40
+};
+
 export default React.createClass({
   getInitialState: function() {
     return { text: '' };
-  },
-
-  componentDidMount: function() {
   },
 
   onClick(e) {
@@ -26,12 +30,27 @@ export default React.createClass({
     this.setState({text: e.target.value});
   },
 
+  onKeyUp(e) {
+    const key = e.which || e.keyCode;
+    switch(key) {
+      case keyCodes.ENTER:
+        e.preventDefault();
+        this.onClick();
+        break;
+    }
+  },
+
   render() {
     return (
       <Grid className='chat-chat'>
         <Row>
           <Col sm={22} md={11}>
-            <FormControl type='text' onChange={this.onChange} />
+            <FormControl
+              type='text'
+              onChange={this.onChange}
+              onKeyUp={this.onKeyUp}
+              value={this.state.text}
+              placeholder="Enter you chat message and hit enter or click the Send button" />
           </Col>
           <Col sm={2} md={1}>
             <Button bsStyle="primary" onClick={this.onClick}>Send</Button>

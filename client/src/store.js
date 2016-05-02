@@ -17,10 +17,8 @@ const Actions = {
 
 var handleReject = function(reject, store) {
   return function(err) {
-    // console.log("------------------------ error in MongoDB Backend provider")
-    // console.log(err.stack)
     // Emit the error to the global error handler
-    if(store) store.error(err);
+    if(store) store.dispatch(Actions.ERROR, {err: err});
     // Reject it
     reject(err);
   }
@@ -34,23 +32,13 @@ class Store {
     this.messages = null;
   }
 
-  onError(onErrorHandler) {
-    this.onErrorHandler = onErrorHandler;
-  }
-
-  error(err) {
-    if(this.onErrorHandler) {
-      return this.onErrorHandler(err);
-    }
-    console.log(err);
-  }
-
   wire(event, handler) {
     if(!this.events[event]) this.events[event] = [];
     this.events[event].push(handler);
   }
 
   dispatch(event, message) {
+    console.log(Object.keys(this.events))
     // Do we have global listeners for these events
     // Then dispatch to their handlers
     if(this.events[event]) {
@@ -87,8 +75,6 @@ class Store {
 
         // Set up the live query handler
         self.messageChangeCursor.on('added', (id, fields) => {
-          // console.log(`received change event notification for id ${id}`);
-          // console.log(fields);
           self.dispatch(Actions.CHAT_RECEIVED, fields);
         });
 
@@ -97,9 +83,10 @@ class Store {
 
         // Resolve
         resolve(self);
-      }).catch(function(e) {
+      }).catch(function(err) {
         self.state = DISCONNECTED;
-        reject(e);
+        self.dispatch(Actions.ERROR, {err: err});
+        reject(err);
       });
     });
   }
@@ -109,12 +96,9 @@ class Store {
 
     return new Promise((resolve, reject) => {
       co(function*() {
-        // console.log("++++++++++++++++++ chat 0")
         var result = yield self.messages.insertOne({
           createdOn: new Date(), user: user, message:message
         });
-        // console.log("++++++++++++++++++ chat 1")
-        // console.log(result)
 
         resolve();
       }).catch(handleReject(reject, self.store));
@@ -131,26 +115,20 @@ function wire(event, handler, store) {
 }
 
 function dispatch(component, store, event, message) {
-  // console.log("======================= dispatch -1")
   co(function*() {
-    // console.log("======================= dispatch 0")
     if(!component || !store) return
-    // console.log("======================= dispatch 1")
     // Handle events
     if(event == Actions.CHAT_SUBMITTED) {
-      // console.log("======================= dispatch 1:1")
-      // console.log(store)
       // Send the chat
       yield store.chat(message.user, message.text);
       // Update state
       if(component.update) component.update(event, {});
     }
 
-    // console.log("======================= dispatch 2")
     // Submit event to any listeners
     store.dispatch(event, message);
-  }).catch(function(e) {
-    store.error(e);
+  }).catch(function(err) {
+    if(store) store.dispatch(Actions.ERROR, {err: err});
   });
 }
 

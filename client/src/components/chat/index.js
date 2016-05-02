@@ -2,7 +2,6 @@
 
 import React from 'react';
 import {Grid, Row, Col, Jumbotron, Input, Button} from 'react-bootstrap';
-import Users from './users';
 import Messages from './messages';
 import Chat from './chat';
 
@@ -18,15 +17,12 @@ export default React.createClass({
     return (
       <Grid className="chat">
         <Row>
-          <Col sm={20} md={10}>
+          <Col sm={24} md={12}>
             <Messages store={this.props.store} messages={this.props.messages} />
-          </Col>
-          <Col sm={4} md={2}>
-            <Users store={this.props.store} />
           </Col>
         </Row>
         <Row>
-          <Chat store={this.props.store} />
+          <Chat store={this.props.store} user={this.props.user} />
         </Row>
       </Grid>
     );
