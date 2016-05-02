@@ -63,6 +63,7 @@ export default React.createClass({
             controlId="formControlsText">
             <ControlLabel>Handle</ControlLabel>
             <FormControl
+              ref="input"
               type="text"
               value={this.state.value}
               placeholder="Enter handle"
@@ -71,7 +72,10 @@ export default React.createClass({
             <HelpBlock>{this.getValidationMessage()}</HelpBlock>
           </FormGroup>
           <FormGroup controlId="formControlsText">
-            <Button bsStyle="primary" onClick={this.onClick}>Chat</Button>
+            <Button
+              ref="submit"
+              bsStyle="primary"
+              onClick={this.onClick}>Chat</Button>
           </FormGroup>
         </Col>
         <Col sm={6} md={3}>
