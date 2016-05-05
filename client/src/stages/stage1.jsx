@@ -13,7 +13,7 @@ var Item = React.createClass({
 
   render: function() {
     return (
-      <li>hello world</li>
+      <li>{this.props.value}</li>
     );
   }
 });
@@ -24,10 +24,36 @@ var List = React.createClass({
   },
 
   render: function() {
-    var items = [];
+    var items = (this.props.items || []).map(function(item, index) {
+      return (
+        <Item key={index} value={item} />
+      )
+    });
 
     return (
       <ul>{items}</ul>
+    );
+  }
+});
+
+var Form = React.createClass({
+  getInitialState: function() {
+    return {};
+  },
+
+  onClick: function() {
+    if(this.props.onSubmit) {
+      this.props.onSubmit(this.refs.input.value);
+      this.refs.input.value = '';
+    }
+  },
+
+  render: function() {
+    return (
+      <div>
+        <input ref='input' type='text'/>
+        <button onClick={this.onClick}>Submit</button>
+      </div>
     );
   }
 });
@@ -43,6 +69,12 @@ co(function*() {
   // Get the collections
   var characters = db.collection('characters');
 
+  // Submit handler
+  var onSubmit = function(entry) {
+    console.log('-- onSubmit');
+    console.log(entry);
+  };
+
   // Refresh the items at even intervals
   setInterval(function() {
     co(function*() {
@@ -53,7 +85,10 @@ co(function*() {
 
       // Render the application
       ReactDOM.render(
-        <List items={entries} />,
+        <div>
+          <Form onSubmit={onSubmit}/>
+          <List items={entries} />
+        </div>,
         document.getElementById('app')
       );
     });
