@@ -23,16 +23,16 @@ co(function*() {
   // Create http server
   var httpServer = require('http').createServer(app);
   // Create a socket.io transport for the browser mongodb server and register
-  browserMongoDBServer.registerHandler(new SocketIOTransport(httpServer));
+  browserMongoDBServer.registerTransport(new SocketIOTransport(httpServer));
   // Get the channel we will be using (this makes liveQuery connect aswell)
-  var channel = yield browserMongoDBServer.channel('mongodb');
+  var channel = yield browserMongoDBServer.createChannel('mongodb');
 
-  // // Add a before handler to log all traffic (also used to handle auth, validation etc)
-  // channel.before(function(conn, channel, data, callback) {
-  //   console.log("== received message on channel mongodb");
-  //   console.log(JSON.stringify(data, null, 2));
-  //   callback();
-  // });
+  // Add a before handler to log all traffic (also used to handle auth, validation etc)
+  channel.before(function(conn, channel, data, callback) {
+    console.log("== received message on channel mongodb");
+    console.log(JSON.stringify(data, null, 2));
+    callback();
+  });
 
   // Connect http server
   httpServer.listen(port, function() {

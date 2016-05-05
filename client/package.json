@@ -6,7 +6,9 @@
   "scripts": {
     "test": "mocha --compilers js:babel-core/register --require babel-polyfill --require ./test/test_helper.js 'test/**/*.@(js|jsx)'",
     "test:watch": "npm run test -- --watch",
-    "dev": "webpack-dev-server"
+    "dev": "webpack-dev-server",
+    "dev:stage0": "webpack-dev-server --config ./webpack.stage0.config.js",
+    "dev:stage1": "webpack-dev-server --config ./webpack.stage1.config.js"
   },
   "repository": {
     "type": "git",

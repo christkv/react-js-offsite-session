@@ -138,7 +138,6 @@ var Child = React.createClass({
 
   onClick: function() {
     var onFilterChange = this.props.onFilterChange;
-
     if(onFilterChange) {
       onFilterChange(this.refs.filterTextField.value);
     }
@@ -236,4 +235,67 @@ Tea = Relay.createContainer(Tea, {
     `,
   },
 });
+```
+
+# MongoDB in the browser
+
+## Introduction
+
+MongoDB in the browser is a prototype module allowing for MongoDB interactions from the browser. It has the following features.
+
+- Server component with Socket.IO and REST style transports.
+- Find, Insert, Update, Delete, Aggregate from the browser using an API very close to the existing driver.
+- LiveQueries using the oplog (register a query and receive change notifications).
+- Extend with custom commands.
+- Interdict operations before they are executed to enforce authentication or other middleware requirements.
+
+## Simple insert example
+
+Given that MongoClient, SocketIOTransport and ioClient exists in the browser.
+
+```js
+co(function*() {
+  // Create Socket.IO transport instance
+  var socketIOTransport = new SocketIOTransport(ioClient.connect, {});
+  // Create a mongoClient instance (you can have multiple)
+  var mongoClient = new MongoClient(socketIOTransport);
+  // Connect to the backend
+  var client = yield mongoClient.connect("http://localhost:9090");
+  // Grab a database
+  var db = client.db('application');
+  // Grab a collection
+  var collection = db.collection('documents');
+  // Insert a single document into application.documents
+  var result = yield collections.insertOne({ a: 1 });
+});
+```
+
+## The Backend code
+
+Given a mongodb driver db instance and a httpServer instance
+
+```js
+// Create the browser server
+var browserMongoDBServer = new BrowserMongoDBServer(db, {});
+// Create a socket.io transport for the browser mongodb server and register
+browserMongoDBServer.registerTransport(new SocketIOTransport(httpServer));
+// Create a named channel
+var channel = yield browserMongoDBServer.createChannel('mongodb');
+// Add a before handler to interdict all communication before
+// it hits the mongodb instance
+channel.before(function(conn, channel, data, callback) {
+  console.log("== received message on channel mongodb");
+  console.log(JSON.stringify(data, null, 2));
+  callback();
+});
+```
+
+The backend supports talking over one or more transports. The prototype supports Socket.IO and an Express REST backend. If you want to use the LiveQuery functionality you have to use Socket.IO as there is no push support using the REST transport.
+
+A channel is a named pipe over the transport. You can have multiple channels if you need each handled differently. Say a public channel for open API calls and a private channel for authenticated API calls.
+
+You can specify the channel when performing a MongoClient connect in the client.
+
+```js
+var client = yield mongoClient.connect("http://localhost:9090", "private");
 ```

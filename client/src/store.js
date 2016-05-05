@@ -38,7 +38,6 @@ class Store {
   }
 
   dispatch(event, message) {
-    console.log(Object.keys(this.events))
     // Do we have global listeners for these events
     // Then dispatch to their handlers
     if(this.events[event]) {
