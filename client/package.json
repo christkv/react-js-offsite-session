@@ -8,7 +8,8 @@
     "test:watch": "npm run test -- --watch",
     "dev": "webpack-dev-server",
     "dev:stage0": "webpack-dev-server --config ./webpack.stage0.config.js",
-    "dev:stage1": "webpack-dev-server --config ./webpack.stage1.config.js"
+    "dev:stage1": "webpack-dev-server --config ./webpack.stage1.config.js",
+    "dev:stage2": "webpack-dev-server --config ./webpack.stage2.config.js"
   },
   "repository": {
     "type": "git",
